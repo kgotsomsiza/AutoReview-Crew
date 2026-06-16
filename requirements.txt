@@ -1,0 +1,13 @@
+# Install with:  pip install -r requirements.txt
+# (Activate your virtual environment first - see README.)
+
+python-dotenv>=1.0           # loads your .env file
+openai>=1.0                  # OpenAI-compatible client (check_key.py, check_completions.py)
+
+# Band platform + the LangGraph adapter (brings langchain, langgraph, etc.)
+# band-sdk 1.0.x imports as `band`.
+band-sdk[langgraph]>=1.0.0
+langchain-openai>=1.0
+
+# Demo web app (the hackathon's Application URL; simulation-powered)
+streamlit>=1.30

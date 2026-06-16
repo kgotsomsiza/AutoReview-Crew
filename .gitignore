@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment / secrets — NEVER commit your real keys
+.env
+API keys.md
+agent_config.yaml
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local working material - not part of the submission repo
+Screenshots/
+.claude/
+deck/qa/
+*.mp4
+*.mov
+*.mkv
+*.flv
+
+# Live run logs, scratch notes, and backups - not part of the submission repo
+run_crew.live.log
+run_crew.live.err
+*.bak
+Last run.txt
+
+# Office lock/temp files (e.g. deck/~$AutoReview_Crew_Deck.pptx)
+~$*

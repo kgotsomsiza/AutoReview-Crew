@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AutoReview Crew</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #06343d;
+        --muted: #4c6764;
+        --line: #c9e6e1;
+        --mint: #14b8a6;
+        --mint-soft: #dff8f4;
+        --paper: #f7fbfa;
+        --card: #ffffff;
+        --danger: #b4232a;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      main {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 26px 0 40px;
+      }
+
+      .hero {
+        background: var(--ink);
+        color: white;
+        border-radius: 8px;
+        padding: 34px 38px;
+        margin-bottom: 20px;
+      }
+
+      .hero h1 {
+        margin: 0 0 10px;
+        font-size: clamp(34px, 5vw, 52px);
+        letter-spacing: 0;
+        line-height: 1;
+      }
+
+      .hero p {
+        margin: 0;
+        color: #b8ebe4;
+        font-size: 20px;
+        line-height: 1.45;
+        max-width: 900px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 18px 0;
+      }
+
+      .tab {
+        border: 1px solid var(--line);
+        background: white;
+        color: var(--ink);
+        border-radius: 8px;
+        padding: 10px 13px;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .tab[aria-selected="true"] {
+        background: var(--ink);
+        color: white;
+        border-color: var(--ink);
+      }
+
+      .panel {
+        display: none;
+      }
+
+      .panel.active {
+        display: block;
+      }
+
+      h2 {
+        margin: 22px 0 12px;
+        font-size: 25px;
+        letter-spacing: 0;
+      }
+
+      .lede {
+        color: var(--muted);
+        line-height: 1.55;
+        max-width: 860px;
+        margin: 0 0 18px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: 8px;
+        border-top: 5px solid var(--mint);
+        box-shadow: 0 8px 24px rgba(6, 52, 61, 0.08);
+        padding: 18px;
+        min-height: 132px;
+      }
+
+      .card.danger {
+        border-top-color: #f96167;
+      }
+
+      .card h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .pill {
+        display: inline-block;
+        background: var(--mint-soft);
+        color: #0b6f68;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 13px;
+        margin: 10px 6px 0 0;
+      }
+
+      .timeline {
+        display: grid;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .event {
+        display: grid;
+        grid-template-columns: 92px 190px 1fr;
+        gap: 12px;
+        align-items: start;
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 13px 15px;
+      }
+
+      .time {
+        color: #71827f;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .speaker {
+        font-weight: 700;
+      }
+
+      .message {
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .message details > summary {
+        cursor: pointer;
+        color: var(--muted);
+        line-height: 1.45;
+        list-style: none;
+      }
+
+      .message details > summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .message details > summary::after {
+        content: "   [+] show full message";
+        color: #0b8a80;
+        font-size: 13px;
+      }
+
+      .message details[open] > summary::after {
+        content: "   [-] hide full message";
+      }
+
+      .message .full {
+        margin: 10px 0 2px;
+        padding: 12px 14px;
+        background: #f3faf8;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: Consolas, Menlo, monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #143a3a;
+        overflow-x: auto;
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 14px 0;
+      }
+
+      button.primary {
+        border: 0;
+        background: var(--mint);
+        color: #032b30;
+        font-weight: 700;
+        border-radius: 8px;
+        padding: 11px 16px;
+        cursor: pointer;
+      }
+
+      .decision {
+        margin-top: 14px;
+        background: #e8fbf7;
+        color: #075d56;
+        border: 1px solid #a4e7dc;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-weight: 700;
+      }
+
+      .checklist {
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 18px 22px;
+        line-height: 1.75;
+      }
+
+      a {
+        color: #087a73;
+      }
+
+      @media (max-width: 900px) {
+        .grid,
+        .grid.two {
+          grid-template-columns: 1fr;
+        }
+
+        .event {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <h1>AutoReview Crew</h1>
+        <p>Four AI agents review a code change together in Band, recruit a test specialist mid-review, and escalate risky changes to a human before merge.</p>
+      </section>
+
+      <nav class="tabs" aria-label="AutoReview Crew sections">
+        <button class="tab" aria-selected="true" data-tab="run">Live Run Replay</button>
+        <button class="tab" aria-selected="false" data-tab="crew">Crew</button>
+        <button class="tab" aria-selected="false" data-tab="findings">Findings</button>
+        <button class="tab" aria-selected="false" data-tab="architecture">Architecture</button>
+      </nav>
+
+      <section class="panel active" id="run">
+        <h2>Recorded take: June 15, 2026, 13:02 UTC</h2>
+        <p class="lede">This replay mirrors the real Band transcript used for the demo video &mdash; expand any line to read the exact message the agent posted in the room. The live system runs through <code>run_crew.py</code>; this hosted page is a safe no-key companion.</p>
+        <div class="actions">
+          <button class="primary" id="replay">Replay the review</button>
+          <span class="lede" id="replay-status">About 51 seconds in the real Band room.</span>
+        </div>
+        <div class="timeline" id="timeline"></div>
+        <div class="decision">Decision: ESCALATE_TO_HUMAN. All specialist reports arrived before the Lead finalized.</div>
+      </section>
+
+      <section class="panel" id="crew">
+        <h2>The agents</h2>
+        <div class="grid" id="agents"></div>
+      </section>
+
+      <section class="panel" id="findings">
+        <h2>What the crew caught</h2>
+        <div class="grid two" id="findings-grid"></div>
+      </section>
+
+      <section class="panel" id="architecture">
+        <h2>How the system is wired</h2>
+        <div class="grid two">
+          <article class="card">
+            <h3>Band is the coordination layer</h3>
+            <p>Assignments, reports, recruitment, shared context, and human escalation all happen through Band room messages and platform tools.</p>
+          </article>
+          <article class="card">
+            <h3>Deterministic Lead coordination</h3>
+            <p>The Lead waits for current-round reports, ignores stale context, recruits Test only when needed, and escalates risky changes.</p>
+          </article>
+          <article class="card">
+            <h3>Cross-provider reviewers</h3>
+            <p>AI/ML API powers the Lead, Correctness, and Test agents; Featherless powers the Security Reviewer with Qwen2.5-72B.</p>
+          </article>
+          <article class="card">
+            <h3>Human-in-the-loop merge gate</h3>
+            <p>The crew does not approve risky code silently. Critical findings are aggregated and sent back to the human owner.</p>
+          </article>
+        </div>
+      </section>
+
+    </main>
+
+    <script>
+      const transcript = [
+        ["13:02:23", "Lead Reviewer", "Delegates once to Correctness and Security.",
+`@Correctness Reviewer @Security Reviewer please review the latest code change now.`],
+        ["13:02:33", "Correctness Reviewer", "Flags division by zero and a mutable default argument.",
+`@Lead Reviewer [HIGH] Division by zero in average_order_value - divides by len(orders) with no empty-list check.
+FIX: if not orders: return 0
+
+[HIGH] Mutable default argument in record_refund - default list refunds is shared across calls.
+FIX: def record_refund(amount, refunds=None):
+if refunds is None:
+refunds = []
+refunds.append(amount)
+return refunds`],
+        ["13:02:48", "Security Reviewer", "Flags a hardcoded Stripe API key, SQL injection, and missing input validation.",
+`@Lead Reviewer [CRITICAL] Hardcoded Stripe API key - a live secret is committed in the source.
+FIX: load it from an environment variable: STRIPE_API_KEY = os.environ["STRIPE_KEY"]
+
+[HIGH] SQL Injection vulnerability - user input is directly used in SQL query.
+FIX: use parameterized queries: cursor.execute("SELECT * FROM charges WHERE user_id = ?", (user_id,))
+
+[MEDIUM] Missing input validation - no checks on the orders parameter in average_order_value.
+FIX: validate orders is a non-empty list of dictionaries with an 'amount' key: assert isinstance(orders, list) and all(isinstance(o, dict) and 'amount' in o for o in orders)
+
+[LOW] Potential side-effect in record_refund - modifying a default mutable argument.
+FIX: use None as the default and initialize inside the function: def record_refund(amount, refunds=None): refunds = refunds or []`],
+        ["13:02:55", "Lead Reviewer", "Recruits the Test Reviewer because no decision is allowed without test coverage.",
+`@Test Reviewer please review the test coverage for the latest code change now.`],
+        ["13:03:08", "Test Reviewer", "Posts pytest coverage for empty orders, SQL injection, and mutable defaults.",
+`@Lead Reviewer [TESTS] verdict - Missing tests for empty order list, SQL injection, and mutable default argument.
+
+import sqlite3
+import pytest
+from payments import average_order_value, get_user_charges, record_refund
+
+def test_average_order_value_empty_list_returns_zero():
+    # Test that an empty list of orders returns 0 to avoid ZeroDivisionError.
+    assert average_order_value([]) == 0
+
+def test_get_user_charges_prevents_sql_injection():
+    # Test that SQL injection attempts are blocked by parameterized queries.
+    conn = sqlite3.connect(':memory:')
+    cursor = conn.cursor()
+    cursor.execute("CREATE TABLE charges (user_id TEXT, amount REAL)")
+    cursor.execute("INSERT INTO charges VALUES ('user1', 100.0)")
+    conn.commit()
+    injected_user_id = "user1' OR '1'='1"
+    assert len(get_user_charges(conn, injected_user_id)) == 0
+    conn.close()
+
+def test_record_refund_mutable_default_is_handled():
+    # Test that the default 'refunds' list is not shared across calls.
+    first_refunds = record_refund(10)
+    second_refunds = record_refund(20)
+    assert first_refunds == [10]
+    assert second_refunds == [20]
+    assert first_refunds is not second_refunds`],
+        ["13:03:13", "Lead Reviewer", "Escalates to the human owner with all findings aggregated.",
+`@Kgotso Msiza here is the crew's verdict:
+DECISION: ESCALATE_TO_HUMAN
+FINDINGS:
+[CRITICAL] Hardcoded Stripe API key - a live secret is committed in the source.
+[HIGH] Division by zero in average_order_value - divides by len(orders) with no empty-list check.
+[HIGH] SQL Injection vulnerability - user input is directly used in SQL query.
+[HIGH] Mutable default argument in record_refund - default list refunds is shared across calls.
+[MEDIUM] Missing input validation - no checks on the orders parameter in average_order_value.
+
+REMEDIATION: Implement environment variable for API key, add checks for empty lists, use parameterized queries, and handle mutable defaults. Tests for these issues are provided.
+
+RATIONALE: The presence of a critical security issue with the hardcoded API key necessitates human intervention. Additionally, the high-severity issues related to division by zero, SQL injection, and mutable default arguments require immediate attention. The provided tests address these concerns, but human oversight is essential to ensure comprehensive resolution.`],
+      ];
+
+      const agents = [
+        ["Lead Reviewer", "Coordinates, recruits, decides", "gpt-4o", "AI/ML API"],
+        ["Correctness Reviewer", "Logic bugs and edge cases", "gemini-2.5-flash", "AI/ML API"],
+        ["Security Reviewer", "Secrets and vulnerabilities", "Qwen2.5-72B", "Featherless AI"],
+        ["Test Reviewer", "Test gaps and pytest suggestions", "Gemini 2.5 Flash", "AI/ML API"],
+      ];
+
+      const findings = [
+        ["CRITICAL", "Hardcoded Stripe API key", "Store secrets in environment variables or a vault."],
+        ["HIGH", "SQL injection in get_user_charges", "Use parameterized SQL queries."],
+        ["HIGH", "Division by zero in average_order_value", "Return 0 or a safe value for an empty order list."],
+        ["MEDIUM", "Mutable default argument in record_refund", "Use None, then allocate a new list per call."],
+        ["LOW", "Missing input validation for refunds", "Reject non-positive refund amounts."],
+        ["TESTS", "Coverage missing for risky paths", "Add pytest tests for the fixes above."],
+      ];
+
+      const timeline = document.querySelector("#timeline");
+      const replayButton = document.querySelector("#replay");
+      const replayStatus = document.querySelector("#replay-status");
+
+      function eventRow(item) {
+        const row = document.createElement("article");
+        row.className = "event";
+
+        const time = document.createElement("div");
+        time.className = "time";
+        time.textContent = item[0];
+
+        const speaker = document.createElement("div");
+        speaker.className = "speaker";
+        speaker.textContent = item[1];
+
+        const message = document.createElement("div");
+        message.className = "message";
+        if (item[3]) {
+          const details = document.createElement("details");
+          const summary = document.createElement("summary");
+          summary.textContent = item[2];
+          const full = document.createElement("pre");
+          full.className = "full";
+          full.textContent = item[3];
+          details.append(summary, full);
+          message.append(details);
+        } else {
+          message.textContent = item[2];
+        }
+
+        row.append(time, speaker, message);
+        return row;
+      }
+
+      function renderTimeline(items = transcript) {
+        timeline.replaceChildren(...items.map(eventRow));
+      }
+
+      async function replay() {
+        replayButton.disabled = true;
+        replayStatus.textContent = "Replaying the sequence.";
+        timeline.replaceChildren();
+        for (const item of transcript) {
+          timeline.appendChild(eventRow(item));
+          await new Promise((resolve) => setTimeout(resolve, 450));
+        }
+        replayStatus.textContent = "Replay complete.";
+        replayButton.disabled = false;
+      }
+
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll(".tab").forEach((item) => item.setAttribute("aria-selected", "false"));
+          document.querySelectorAll(".panel").forEach((item) => item.classList.remove("active"));
+          tab.setAttribute("aria-selected", "true");
+          document.querySelector(`#${tab.dataset.tab}`).classList.add("active");
+        });
+      });
+
+      document.querySelector("#agents").replaceChildren(
+        ...agents.map(([name, role, model, provider]) => {
+          const card = document.createElement("article");
+          card.className = "card";
+          card.innerHTML = `<h3>${name}</h3><p>${role}</p><span class="pill">${model}</span><span class="pill">${provider}</span>`;
+          return card;
+        })
+      );
+
+      document.querySelector("#findings-grid").replaceChildren(
+        ...findings.map(([severity, title, remediation]) => {
+          const card = document.createElement("article");
+          card.className = severity === "CRITICAL" || severity === "HIGH" ? "card danger" : "card";
+          card.innerHTML = `<h3>${severity}: ${title}</h3><p>${remediation}</p>`;
+          return card;
+        })
+      );
+
+      replayButton.addEventListener("click", replay);
+      renderTimeline();
+    </script>
+  </body>
+</html>
